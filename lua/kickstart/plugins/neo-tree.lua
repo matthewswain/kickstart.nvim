@@ -20,6 +20,14 @@ return {
           ['\\'] = 'close_window',
         },
       },
+      filtered_items = {
+        hide_dotfiles = false,
+        hide_gitignored = true,
+        hide_by_name = {
+          'node_modules',
+          '.git',
+        },
+      },
     },
   },
 }
