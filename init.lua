@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -113,7 +113,7 @@ vim.opt.showmode = false
 -- Sync clipboard between OS and Neovim.
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
-vim.opt.clipboard = 'unnamedplus'
+-- vim.opt.clipboard = 'unnamedplus'
 
 -- Enable break indent
 vim.opt.breakindent = true
@@ -152,7 +152,17 @@ vim.opt.inccommand = 'split'
 vim.opt.cursorline = true
 
 -- Minimal number of screen lines to keep above and below the cursor.
-vim.opt.scrolloff = 10
+vim.opt.scrolloff = 5
+
+-- Don't wrap lines
+vim.opt.wrap = false
+
+-- Highlight column to indicate line length
+vim.opt.colorcolumn = '99'
+
+-- Enable spellcheck
+vim.opt.spell = true
+vim.opt.spelllang = 'en_gb'
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -293,6 +303,19 @@ require('lazy').setup({
       require('which-key').register({
         ['<leader>h'] = { 'Git [H]unk' },
       }, { mode = 'v' })
+
+      -- Copy project/relative/path:line to clipboard
+      local function copy_path()
+        local path = vim.fn.expand '%:.'
+        local row_col = vim.api.nvim_win_get_cursor(0)
+        local loc = path .. ':' .. row_col[1]
+        vim.fn.setreg('+', loc)
+        print('Copied path to clipboard: ' .. loc)
+      end
+
+      require('which-key').register {
+        ['<leader>cp'] = { copy_path, 'Copy [p]ath' },
+      }
     end,
   },
 
@@ -565,18 +588,43 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        -- clangd = {},
-        -- gopls = {},
-        -- pyright = {},
-        -- rust_analyzer = {},
+        clangd = {},
+
+        gopls = {},
+
+        intelephense = {
+          settings = {
+            intelephense = {
+              environment = {
+                phpVersion = 8.1,
+              },
+            },
+          },
+        },
+
+        pyright = {
+          settings = {
+            pyright = {
+              pythonVersion = '3.11',
+            },
+          },
+        },
+
+        yamlls = {
+          settings = {
+            yaml = {
+              keyOrdering = false,
+            },
+          },
+        },
+
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`tsserver`) will work just fine
-        -- tsserver = {},
-        --
+        tsserver = {},
 
         lua_ls = {
           -- cmd = {...},
@@ -778,13 +826,13 @@ require('lazy').setup({
     -- change the command in the config to whatever the name of that colorscheme is.
     --
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'folke/tokyonight.nvim',
+    'nordtheme/vim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     init = function()
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
+      vim.cmd.colorscheme 'nord'
 
       -- You can configure highlights by doing something like:
       vim.cmd.hi 'Comment gui=none'
