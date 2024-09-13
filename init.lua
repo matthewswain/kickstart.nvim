@@ -963,6 +963,106 @@ require('lazy').setup({
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --    For additional information, see `:help lazy.nvim-lazy.nvim-structuring-your-plugins`
   -- { import = 'custom.plugins' },
+
+  {
+    'mfussenegger/nvim-dap',
+    config = function()
+      local dap = require 'dap'
+
+      dap.adapters.php = {
+        type = 'executable',
+        command = 'node',
+        args = { os.getenv 'HOME' .. '/src/vscode-php-debug/out/phpDebug.js' },
+      }
+
+      dap.configurations.php = {
+        {
+          type = 'php',
+          request = 'launch',
+          name = 'Listen for xdebug',
+        },
+      }
+    end,
+    keys = {
+      {
+        '<F5>',
+        require('dap').continue,
+        mode = 'n',
+        desc = 'Start/continue debugging',
+      },
+      {
+        '<leader>b',
+        require('dap').toggle_breakpoint,
+        mode = 'n',
+        desc = 'Toggle breakpoint',
+      },
+      {
+        '<F10>',
+        require('dap').step_over,
+        mode = 'n',
+        desc = 'Step over',
+      },
+      {
+        '<F11>',
+        require('dap').step_into,
+        mode = 'n',
+        desc = 'Step into',
+      },
+      {
+        '<F12>',
+        require('dap').step_out,
+        mode = 'n',
+        desc = 'Step out',
+      },
+      {
+        '<leader>dr',
+        require('dap').repl.open,
+        mode = 'n',
+        desc = 'Open [D]ebugging [R]epl',
+      },
+    },
+  },
+  {
+    'rcarriga/nvim-dap-ui',
+    dependencies = {
+      'nvim-neotest/nvim-nio',
+    },
+    config = function()
+      local dap = require 'dap'
+      local dapui = require 'dapui'
+
+      dapui.setup {
+        layouts = {
+          {
+            elements = {
+              { id = 'scopes', size = 0.25 },
+              'breakpoints',
+              'stacks',
+              'watches',
+            },
+            size = 40,
+            position = 'left',
+          },
+        },
+      }
+
+      dap.listeners.after.event_initialized['dapui'] = dapui.open
+    end,
+    keys = {
+      {
+        '<leader>do',
+        require('dapui').open,
+        mode = 'n',
+        desc = '[D]ebug ui [O]pen',
+      },
+      {
+        '<leader>dc',
+        require('dapui').close,
+        mode = 'n',
+        desc = '[D]ebug ui [C]lose',
+      },
+    },
+  },
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
