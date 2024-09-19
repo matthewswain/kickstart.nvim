@@ -1063,6 +1063,33 @@ require('lazy').setup({
       },
     },
   },
+  {
+    'ThePrimeagen/harpoon',
+    branch = 'harpoon2',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    -- vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
+    -- vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+    keys = {
+      {
+        '<leader>pa',
+        function()
+          local harpoon = require 'harpoon'
+          harpoon:list():add()
+        end,
+        mode = 'n',
+        desc = 'Har[P]oon [A]dd',
+      },
+      {
+        '<leader>po',
+        function()
+          local harpoon = require 'harpoon'
+          harpoon.ui:toggle_quick_menu(harpoon:list())
+        end,
+        mode = 'n',
+        desc = 'Har[P]oon [O]pen',
+      },
+    },
+  },
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
